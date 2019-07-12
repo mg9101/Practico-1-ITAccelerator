@@ -22,6 +22,15 @@ public class APIRest {
         CurrencyService currencyService =
                 new CurrencyServiceMapImpl();
 
+        /**
+         * Metodo que llama a la API de mercado libre y guarda la respuesta
+         * en memoria (y en archivo si se utiliza la implementación de file)
+         *
+         * @param q toma el QueryParam que contiene lo que se quiere buscar
+         * @return retorna la lista de items que devolvió la API de Mercadolibre
+         *
+         */
+
         get("/search", (req, res) -> {
             try{
                 res.type("application/json");
