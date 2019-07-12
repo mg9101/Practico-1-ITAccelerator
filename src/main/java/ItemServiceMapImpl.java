@@ -23,19 +23,26 @@ public class ItemServiceMapImpl implements ItemService {
     }
 
     public Item getItem(String id) throws ItemException {
+        if (!this.itemExists(id)){
+            throw new ItemException("No se encontró el objeto");
+        }
         return this.itemMap.get(id);
     }
 
     public Item editItem(Item item) throws ItemException {
-        return null;
+        if (!this.itemExists(item.getId())){
+            throw new ItemException("No se encontró el objeto que desea modificar");
+        }
+        this.itemMap.replace(item.getId(), item);
+        return item;
     }
 
     public void deleteItem(String id) throws ItemException {
-
+        this.itemMap.remove(id);
     }
 
     public boolean itemExists(String id) throws ItemException {
-        return false;
+        return this.itemMap.containsKey(id);
     }
 
     public Collection<String> getTitulos() throws ItemException {

@@ -1,17 +1,18 @@
+import java.io.Serializable;
 import java.util.Date;
 
-public class Item implements Comparable<Item>{
+public class Item implements Serializable {
     String id;
     String site_id;
     String title;
     double price;
-    Currency currency_id;
+    String currency_id;
     String listing_type_id;
     Date stop_time;
     String thumbnail;
     String[] tags;
 
-    public Item(String id, String site_id, String title, double price, Currency currency_id, String listing_type_id, Date stop_time, String thumbnail, String[] tags) {
+    public Item(String id, String site_id, String title, double price, String currency_id, String listing_type_id, Date stop_time, String thumbnail, String[] tags) {
         this.id = id;
         this.site_id = site_id;
         this.title = title;
@@ -55,11 +56,11 @@ public class Item implements Comparable<Item>{
         this.price = price;
     }
 
-    public Currency getCurrency_id() {
+    public String getCurrency_id() {
         return currency_id;
     }
 
-    public void setCurrency_id(Currency currency_id) {
+    public void setCurrency_id(String currency_id) {
         this.currency_id = currency_id;
     }
 
@@ -99,4 +100,18 @@ public class Item implements Comparable<Item>{
         return 0;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.id);
+        sb.append(this.getSite_id());
+        sb.append(this.getListing_type_id());
+        sb.append(this.getTags());
+        sb.append(this.getCurrency_id());
+        sb.append(this.getPrice());
+        sb.append(this.getTitle());
+        sb.append(this.getStop_time());
+        sb.append(this.getThumbnail());
+        return sb.toString();
+    }
 }

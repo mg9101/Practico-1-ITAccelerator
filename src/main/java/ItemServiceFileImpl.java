@@ -15,17 +15,7 @@ public class ItemServiceFileImpl implements ItemService {
     private HashMap<String, Item> itemMap;
 
     public ItemServiceFileImpl() {
-        try{
-            Files.lines(new File("c:/myfile.txt").toPath()).forEach(System.out::println);
-        }
-        catch (IOException ex){
-            System.out.println("Ocurrio un error al escribir el archivo");
-        }
-
-    }
-
-    public void addItem(Item item) throws ItemException {
-        this.itemMap.put(item.getId(), item);
+        itemMap = new HashMap<String, Item>();
     }
 
     @Override
@@ -34,19 +24,28 @@ public class ItemServiceFileImpl implements ItemService {
     }
 
     public Item getItem(String id) throws ItemException {
+        if (!this.itemExists(id)){
+            throw new ItemException("No se encontró el objeto");
+        }
         return this.itemMap.get(id);
     }
 
     public Item editItem(Item item) throws ItemException {
-        return null;
+        if (!this.itemExists(item.getId())){
+            throw new ItemException("No se encontró el objeto que desea modificar");
+        }
+        this.itemMap.replace(item.getId(), item);
+        this.save();
+        return item;
     }
 
     public void deleteItem(String id) throws ItemException {
-
+        this.itemMap.remove(id);
+        this.save();
     }
 
     public boolean itemExists(String id) throws ItemException {
-        return false;
+        return this.itemMap.containsKey(id);
     }
 
     public Collection<String> getTitulos() throws ItemException {
@@ -70,7 +69,7 @@ public class ItemServiceFileImpl implements ItemService {
                 }
             case "listing_type":
                 if (order.equals("asc")){
-                        return this.itemMap.values().stream()
+                    return this.itemMap.values().stream()
                             .sorted(Comparator.comparing(Item::getListing_type_id))
                             .collect(toList());
                 }else if(order.equals("desc")){
@@ -102,5 +101,47 @@ public class ItemServiceFileImpl implements ItemService {
         for (Item i:items) {
             this.addItem(i);
         }
+        this.save();
     }
+
+    @Override
+    public void addItem(Item item) throws ItemException {
+        this.itemMap.put(item.getId(), item);
+        this.save();
+    }
+
+    private Collection<Item> open() throws  ItemException{
+        try {
+            FileInputStream file = new FileInputStream("jsonItems.txt");
+            BufferedInputStream bf = new BufferedInputStream(file);
+            ObjectInputStream out = new ObjectInputStream(bf);
+            this.itemMap = (HashMap<String, Item>) out.readObject();
+            return  this.itemMap.values();
+        } catch (FileNotFoundException e) {
+            // File not found
+            throw new ItemException(e.getMessage());
+        } catch (IOException e) {
+            // Error when writing to the file
+            throw new ItemException(e.getMessage());
+        }catch (ClassNotFoundException e) {
+            // Error with object stream
+            throw new ItemException(e.getMessage());
+        }
+    }
+
+    private void save() throws ItemException {
+        try {
+            FileOutputStream file = new FileOutputStream("jsonItems.txt");
+            BufferedOutputStream bf = new BufferedOutputStream(file);
+            ObjectOutputStream out = new ObjectOutputStream(bf);
+            out.writeObject(this.itemMap);
+        } catch (FileNotFoundException e) {
+            // File not found
+            throw new ItemException(e.getMessage());
+        } catch (IOException e) {
+            // Error when writing to the file
+            throw new ItemException(e.getMessage());
+        }
+    }
+
 }

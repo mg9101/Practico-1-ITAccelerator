@@ -17,16 +17,16 @@ import static spark.Spark.*;
 public class APIRest {
     public static void main(String[] args) {
         ItemService itemService =
-                new ItemServiceMapImpl();
+                new ItemServiceFileImpl();
 
         get("/search", (req, res) -> {
             try{
                 res.type("application/json");
                 JsonObject jobj = callApiMeli("sites/MLA/search?q="+ req.queryParams("q"));
                 Item[] items = new Gson().fromJson(jobj.get("results"), Item[].class);
-                Collection<Currency>  currencies= Arrays.stream(items)
-                        .map(s -> s.getCurrency_id())
-                        .collect(Collectors.toList());
+//                Collection<Currency>  currencies= Arrays.stream(items)
+//                        .map(s -> s.getCurrency_id())
+//                        .collect(Collectors.toList());
 
                 itemService.initialize(items);
                 return  new Gson().toJson( new StandardResponse(
