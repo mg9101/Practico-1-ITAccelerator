@@ -65,6 +65,13 @@ public class APIRest {
             }
         });
 
+        /**
+         * Inserta un item en la colección
+         *
+         * @return Devuelve un status SUCCESS en caso de éxito y ERROR en caso de falla.
+         *
+         */
+
         post("/items", (req, res) -> {
             try{
                 res.type("application/json");
@@ -85,6 +92,13 @@ public class APIRest {
                         StatusResponse.ERROR, "Ocurrio un error"));
             }
         });
+
+        /**
+         * Trae todos los items
+         *
+         * @return Retorna la lista de items cargados en memoria.
+         *
+         */
 
         get("/items", (req, res) -> {
             try{
@@ -257,7 +271,6 @@ public class APIRest {
                         StatusResponse.ERROR, "Ocurrio un error"));
             }
         });
-
     }
     private static String callApiMeli(String endp) throws ItemException{
         try {
