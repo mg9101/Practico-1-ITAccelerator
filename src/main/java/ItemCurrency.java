@@ -7,13 +7,16 @@ public class ItemCurrency implements Serializable {
     String site_id;
     String title;
     double price;
-    Currency currency_id;
+    String currency_id;
     String listing_type_id;
     Date stop_time;
     String thumbnail;
     String[] tags;
 
-    public ItemCurrency(String id, String site_id, String title, double price, Currency currency_id, String listing_type_id, Date stop_time, String thumbnail, String[] tags) {
+    public ItemCurrency() {
+    }
+
+    public ItemCurrency(String id, String site_id, String title, double price, String currency_id, String listing_type_id, Date stop_time, String thumbnail, String[] tags) {
         this.id = id;
         this.site_id = site_id;
         this.title = title;
@@ -57,11 +60,11 @@ public class ItemCurrency implements Serializable {
         this.price = price;
     }
 
-    public Currency getCurrency_id() {
+    public String getCurrency_id() {
         return currency_id;
     }
 
-    public void setCurrency_id(Currency currency_id) {
+    public void setCurrency_id(String currency_id) {
         this.currency_id = currency_id;
     }
 

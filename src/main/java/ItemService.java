@@ -1,7 +1,8 @@
+import java.util.ArrayList;
 import java.util.Collection;
 
 public interface ItemService {
-    public void initialize(Item[] items) throws ItemException;
+    public void initialize(ArrayList<Item> items) throws ItemException;
     public void addItem(Item item) throws ItemException;
     public Collection<Item> getItems() throws ItemException;
     public Item getItem(String id) throws ItemException;

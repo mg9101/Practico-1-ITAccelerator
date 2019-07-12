@@ -1,40 +1,46 @@
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 import static spark.Spark.*;
 
 public class APIRest {
     public static void main(String[] args) {
         ItemService itemService =
-                new ItemServiceFileImpl();
+                new ItemServiceMapImpl();
+
+        CurrencyService currencyService =
+                new CurrencyServiceMapImpl();
 
         get("/search", (req, res) -> {
             try{
                 res.type("application/json");
-                JsonObject jobj = callApiMeli("sites/MLA/search?q="+ req.queryParams("q"));
-                Item[] items = new Gson().fromJson(jobj.get("results"), Item[].class);
-                JsonObject jobjCurrencies = callApiMeli("currencies");
-                ItemCurrency[] currencies = new Gson().fromJson(jobj, ItemCurrency[].class);
-
-                for (Item i:items) {
-                    Arrays.stream(currencies).filter(s->s.getId() == i.getCurrency_id()).findFirst();
+                String urlString = callApiMeli("sites/MLA/search?q="+ req.queryParams("q"));
+                JsonObject jobj = new Gson().fromJson(urlString, JsonObject.class);
+                ItemCurrency[] items = new Gson().fromJson(jobj.get("results"), ItemCurrency[].class);
+                String urlStringCurrencies = callApiMeli("currencies");
+                JsonArray jobjCurrencies = new Gson().fromJson(urlStringCurrencies, JsonArray.class);
+                Currency[] currencies = new Gson().fromJson(jobjCurrencies, Currency[].class);
+                ArrayList<Item> itemsArray = new ArrayList<Item>();
+                Item item;
+                currencyService.initialize(currencies);
+                for (ItemCurrency i:items) {
+                    Currency currency = currencyService.getCurrency(i.getCurrency_id());
+                    item = new Item(i.getId(), i.getSite_id(), i.getTitle(), i.getPrice(), currency, i.getListing_type_id(),
+                            i.getStop_time(), i.getThumbnail(), i.getTags());
+                    itemsArray.add(item);
                 }
-//                Collection<Currency>  currencies= Arrays.stream(items)
-//                        .map(s -> s.getCurrency_id())
-//                        .collect(Collectors.toList());
-
-                itemService.initialize(items);
+                itemService.initialize(itemsArray);
                 return  new Gson().toJson( new StandardResponse(
                         StatusResponse.SUCCESS, new Gson().
                         toJsonTree(itemService.getItems())
@@ -244,7 +250,7 @@ public class APIRest {
         });
 
     }
-    private static JsonObject callApiMeli(String endp) throws ItemException{
+    private static String callApiMeli(String endp) throws ItemException{
         try {
             URL url = new URL("https://api.mercadolibre.com/" + endp);
             URLConnection urlConnection = url.openConnection();
@@ -266,8 +272,7 @@ public class APIRest {
             while ((current = in.readLine()) != null){
                 urlString += current;
             }
-            JsonObject jobj = new Gson().fromJson(urlString, JsonObject.class);
-            return jobj;
+            return urlString;
         }
         catch (MalformedURLException ex){
             throw new ItemException("La url no tiene el formato correcto");

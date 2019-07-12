@@ -1,23 +1,23 @@
 import java.util.Arrays;
 
 public class Currency {
-    int id;
+    String id;
     String symbol;
     String description;
     int decimal_places;
 
-    public Currency(int id, String symbol, String description, int decimal_places) {
+    public Currency(String id, String symbol, String description, int decimal_places) {
         this.id = id;
         this.symbol = symbol;
         this.description = description;
         this.decimal_places = decimal_places;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

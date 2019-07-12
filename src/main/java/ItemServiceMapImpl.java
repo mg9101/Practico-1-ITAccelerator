@@ -1,7 +1,4 @@
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -93,7 +90,7 @@ public class ItemServiceMapImpl implements ItemService {
                 .collect(toList());
     }
 
-    public void initialize(Item[] items)  throws ItemException{
+    public void initialize(ArrayList<Item> items)  throws ItemException{
         this.itemMap.clear();
         for (Item i:items) {
             this.addItem(i);
