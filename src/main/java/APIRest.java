@@ -24,6 +24,12 @@ public class APIRest {
                 res.type("application/json");
                 JsonObject jobj = callApiMeli("sites/MLA/search?q="+ req.queryParams("q"));
                 Item[] items = new Gson().fromJson(jobj.get("results"), Item[].class);
+                JsonObject jobjCurrencies = callApiMeli("currencies");
+                ItemCurrency[] currencies = new Gson().fromJson(jobj, ItemCurrency[].class);
+
+                for (Item i:items) {
+                    Arrays.stream(currencies).filter(s->s.getId() == i.getCurrency_id()).findFirst();
+                }
 //                Collection<Currency>  currencies= Arrays.stream(items)
 //                        .map(s -> s.getCurrency_id())
 //                        .collect(Collectors.toList());
